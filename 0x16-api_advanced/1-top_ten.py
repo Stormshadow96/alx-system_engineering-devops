@@ -1,20 +1,33 @@
-#!/usr/bin/python3
-"""
-    Uses reddit API to get 10 hot posts
-"""
 import requests
 
-
 def top_ten(subreddit):
-    """Get 10 hot posts"""
-    url = f"https://www.reddit.com/r/{subreddit}/hot.json?limit=10"
-    headers = {'user-agent': 'request'}
-    response = requests.get(url, headers=headers, allow_redirects=False)
+    url = "https://api.reddit.com/r/{}/hot.json".format(subreddit)
+    headers = {
+        "User-Agent": "My User Agent 1.0",
+    }
+    params = {
+        "limit": 10,
+    }
 
-    if response.status_code != 200:
-        print(None)
-        return
+    try:
+        response = requests.get(url, headers=headers, params=params, allow_redirects=False)
+        response.raise_for_status()
 
-    data = response.json().get("data").get("children")
-    top_10_posts = "\n".join(post.get("data").get("title") for post in data)
-    print(top_10_posts)
+        data = response.json()
+        for post in data["data"]["children"]:
+            print(post["data"]["title"])
+
+    except requests.exceptions.HTTPError as e:
+        if response.status_code == 404:
+            print(None)
+        else:
+            print("An error occurred: ", e)
+
+    except requests.exceptions.ConnectionError as e:
+        print("Failed to connect to Reddit API: ", e)
+
+    except requests.exceptions.Timeout as e:
+        print("Request timed out: ", e)
+
+    except requests.exceptions.RequestException as e:
+        print("An error occurred: ", e)
