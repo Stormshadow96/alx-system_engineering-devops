@@ -9,13 +9,10 @@ def top_ten(subreddit):
     headers = {
         "User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"
     }
-    params = {
-        "limit": 10
-    }
-    response = requests.get(url, headers=headers, params=params,
-                            allow_redirects=False)
-    if response.status_code == 404:
+    response = requests.get(url, headers=headers)
+    try:
+        top_ten = response.json()['data']['children']
+        for post in top_ten:
+            print(post['data']['title'])
+    except KeyError:
         print("None")
-        return
-    results = response.json().get("data")
-    [print(c.get("data").get("title")) for c in results.get("children")]
