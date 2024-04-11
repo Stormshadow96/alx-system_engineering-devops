@@ -1,35 +1,21 @@
 #!/usr/bin/python3
-
+"""Function to print hot posts on a given Reddit subreddit."""
 import requests
 
+
 def top_ten(subreddit):
-    url = "https://api.reddit.com/r/{}/hot.json".format(subreddit)
+    """Print the titles of the 10 hottest posts on a given subreddit."""
+    url = "https://www.reddit.com/r/{}/hot/.json".format(subreddit)
     headers = {
-        "User-Agent": "My User Agent 1.0",
+        "User-Agent": "linux:0x16.api.advanced:v1.0.0 (by /u/bdov_)"
     }
     params = {
-        "limit": 10,
+        "limit": 10
     }
-
-    try:
-        response = requests.get(url, headers=headers, params=params, allow_redirects=False)
-        response.raise_for_status()
-
-        data = response.json()
-        for post in data["data"]["children"]:
-            print(post["data"]["title"])
-
-    except requests.exceptions.HTTPError as e:
-        if response.status_code == 404:
-            print(None)
-        else:
-            print("An error occurred: ", e)
-
-    except requests.exceptions.ConnectionError as e:
-        print("Failed to connect to Reddit API: ", e)
-
-    except requests.exceptions.Timeout as e:
-        print("Request timed out: ", e)
-
-    except requests.exceptions.RequestException as e:
-        print("An error occurred: ", e)
+    response = requests.get(url, headers=headers, params=params,
+                            allow_redirects=False)
+    if response.status_code == 404:
+        print("None")
+        return
+    results = response.json().get("data")
+    [print(c.get("data").get("title")) for c in results.get("children")]
