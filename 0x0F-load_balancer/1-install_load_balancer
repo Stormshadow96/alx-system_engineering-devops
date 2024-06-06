@@ -17,8 +17,8 @@ frontend  Stormshadow96_frontend
         default_backend shadow96_backend
 backend shadow96_backend
         balance roundrobin
-        server 496825-web-01 54.162.48.56:80 check
-        server 496825-web-02 54.160.99.121:80 check
+        server 496825-web-01 100.26.213.199:80 check
+        server 496825-web-02 54.173.61.204:80 check
 "
 echo "$server_config" | sudo tee -a /etc/haproxy/haproxy.cfg
 
